@@ -4,10 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Beastrack
+namespace Beastrack.Utility
 {
-    class OpenPoseJsonReader
+    class Program
     {
-
+        static void Main(string[] args)
+        {
+        }
     }
 }

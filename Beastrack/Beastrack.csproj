@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{80D3824B-0963-46F9-A1C4-50E36A4B0C93}</ProjectGuid>
+    <ProjectGuid>{6EAE1167-169F-4C7B-BA41-921C09B4EA48}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>Beastrack</RootNamespace>
     <AssemblyName>Beastrack</AssemblyName>
@@ -35,9 +35,6 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Numerics" />
-    <Reference Include="System.Numerics.Vectors" />
-    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -46,9 +43,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Model\BodyPart.cs" />
-    <Compile Include="Model\Doll.cs" />
-    <Compile Include="Model\Node.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -57,8 +51,20 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Beastrack.Utility\Beastrack.Utility.csproj">
-      <Project>{7828F340-DB12-42FB-9331-F33685BBDCAB}</Project>
+      <Project>{7828f340-db12-42fb-9331-f33685bbdcab}</Project>
       <Name>Beastrack.Utility</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\KMR\KMR.csproj">
+      <Project>{7e59b83b-57b9-4af2-819e-b2ff4002769a}</Project>
+      <Name>KMR</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MUR\MUR.csproj">
+      <Project>{9ab721fe-2c40-4956-b08c-8afed85ee430}</Project>
+      <Name>MUR</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SZK\SZK.csproj">
+      <Project>{80d3824b-0963-46f9-a1c4-50e36a4b0c93}</Project>
+      <Name>SZK</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

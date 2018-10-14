@@ -47,6 +47,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IO\VmdWriter.cs" />
     <Compile Include="VmdNS\Bone.cs" />
     <Compile Include="IO\VmdReader.cs" />
     <Compile Include="VmdNS\Frame.cs" />
@@ -61,6 +62,10 @@
     <ProjectReference Include="..\Beastrack.Utility\Beastrack.Utility.csproj">
       <Project>{7828F340-DB12-42FB-9331-F33685BBDCAB}</Project>
       <Name>Beastrack.Utility</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SZK\SZK.csproj">
+      <Project>{80d3824b-0963-46f9-a1c4-50e36a4b0c93}</Project>
+      <Name>SZK</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

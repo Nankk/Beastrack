@@ -14,7 +14,7 @@ namespace MUR.IO
             _path = path;
         }
 
-        public Vmd ReadVmd()
+        public Vmd Read()
         {
             var vmd = new Vmd();
             using (var br = new BinaryReader(File.OpenRead(_path)))
@@ -47,11 +47,11 @@ namespace MUR.IO
                     if (string.IsNullOrEmpty(boneName)) break;
                     int frameIdx = br.ReadInt32();
 
-                    // Finalize and register the current frame and create new frame when frame index increase
+                    // Finalize and register the current frame and create a new instance when the frame index increases
                     if (currentFrame.Index != frameIdx)
                     {
                         if (currentFrame.Index > frameIdx)
-                            throw new Exception("Frame indices are not sorted ascending order.");
+                            throw new Exception("Frame indices are not sorted in ascending order.");
 
                         vmd.Frames.Add(currentFrame);
                         currentFrame = new Frame { Index = frameIdx };

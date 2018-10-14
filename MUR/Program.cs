@@ -2,6 +2,8 @@
 using MUR.IO;
 using System;
 
+// Mmd Utilities/Unified/ Regulator??
+// 何の略にしよう？役割は正直MMD関連ファイルとのインターフェース以外の何物でもない
 namespace MUR
 {
     class Program
@@ -14,8 +16,11 @@ namespace MUR
             string path = args[0];
 #endif
 
-            VmdReader vr = new VmdReader(path);
-            var vmd = vr.ReadVmd();
+            var vr = new VmdReader(path);
+            var vmd = vr.Read();
+
+            var vw = new VmdWriter(path.Substring(0, path.LastIndexOf('.')) + "_rewrite.vmd");
+            vw.Write(vmd);
 
             foreach (var frame in vmd.Frames)
             {

@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MUR.VmdNS
 {
@@ -12,6 +8,72 @@ namespace MUR.VmdNS
         public string Name { get; set; }
         public Vector3 Position { get; set; }
         public Quaternion Quaternion { get; set; }
-        public List<byte> InterpolationParameters { get; set; }
+        public List<byte> InterpolationParameters { get; set; } = new List<byte>
+        {
+            0x14,
+            0x14,
+            0x00,
+            0x00,
+            0x14,
+            0x14,
+            0x14,
+            0x14,
+            0x6B,
+            0x6B,
+            0x6B,
+            0x6B,
+            0x6B,
+            0x6B,
+            0x6B,
+            0x6B,
+            0x14,
+            0x14,
+            0x14,
+            0x14,
+            0x14,
+            0x14,
+            0x14,
+            0x6B,
+            0x6B,
+            0x6B,
+            0x6B,
+            0x6B,
+            0x6B,
+            0x6B,
+            0x6B,
+            0x00,
+            0x14,
+            0x14,
+            0x14,
+            0x14,
+            0x14,
+            0x14,
+            0x6B,
+            0x6B,
+            0x6B,
+            0x6B,
+            0x6B,
+            0x6B,
+            0x6B,
+            0x6B,
+            0x00,
+            0x00,
+            0x14,
+            0x14,
+            0x14,
+            0x14,
+            0x14,
+            0x6B,
+            0x6B,
+            0x6B,
+            0x6B,
+            0x6B,
+            0x6B,
+            0x6B,
+            0x6B,
+            0x00,
+            0x00,
+            0x00,
+        };
     }
 }

@@ -10,7 +10,6 @@ namespace SZK
     {
         static void Main(string[] args)
         {
-
         }
     }
 }

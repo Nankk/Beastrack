@@ -1,6 +1,7 @@
 ﻿using KMR.IO;
 using System;
 
+// Kinematic Motionframe Reducer
 namespace KMR
 {
     class Program
@@ -8,12 +9,12 @@ namespace KMR
         static void Main(string[] args)
         {
 #if DEBUG
-            string path = @"C:\tmp\Sample_000000000132_keypoints.json";
+            string dir = @"C:\tmp\";
 #else
 
 #endif
-            var opr = new OpenPoseReader(path);
-            var keypoints = opr.Read();
+            var opr = new OpenPoseReader(dir);
+            var keypoints = opr.ReadOneFile("Sample_000000000132_keypoints.json");
             Console.WriteLine($"Keypoints:");
             int count = 0;
             foreach (var kp in keypoints)

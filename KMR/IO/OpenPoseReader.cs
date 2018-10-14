@@ -11,17 +11,21 @@ namespace KMR.IO
 {
     public class OpenPoseReader
     {
-        public OpenPoseReader(string jsonPath)
+        public OpenPoseReader(string openPoseOutDir)
         {
-            _jsonPath = jsonPath;
+            if (openPoseOutDir.Last() != '/')
+                openPoseOutDir = openPoseOutDir + "/";
+
+            _openPoseOutDir = openPoseOutDir;
         }
 
-        public List<Keypoint> Read()
+        public List<Keypoint> ReadOneFile(string filename)
         {
             List<List<Keypoint>> people = new List<List<Keypoint>>();
 
+            string fullPath = _openPoseOutDir + filename;
             string content = "";
-            using (var sr = new StreamReader(_jsonPath))
+            using (var sr = new StreamReader(fullPath))
             {
                 content = sr.ReadToEnd();
             }
@@ -45,6 +49,16 @@ namespace KMR.IO
             // For now only single person tracking is implemented
             return people[0];
         }
+        public List<List<Keypoint>> ReadAll()
+        {
+            var keypointsCollection = new List<List<Keypoint>>();
+            var jsonFileNames = Directory.GetFiles(_openPoseOutDir, "*.json");
+            foreach (var fileName in jsonFileNames)
+            {
+                keypointsCollection.Add(ReadOneFile(_openPoseOutDir + fileName));
+            }
+            return keypointsCollection;
+        }
 
         // --- private ---
         List<Keypoint> ParseKeypoints(string arrayString)
@@ -65,24 +79,6 @@ namespace KMR.IO
             return keypoints;
         }
 
-        string _jsonPath;
-    }
-
-    public class Keypoint
-    {
-        public Keypoint()
-        {
-
-        }
-        public Keypoint(double x, double y, double reliability)
-        {
-            X = x;
-            Y = y;
-            Reliability = reliability;
-        }
-
-        public double X { get; set; }
-        public double Y { get; set; }
-        public double Reliability { get; set; }
+        string _openPoseOutDir;
     }
 }

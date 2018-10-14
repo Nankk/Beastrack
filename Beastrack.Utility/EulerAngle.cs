@@ -9,11 +9,11 @@ namespace Beastrack.Utility
         {
 
         }
-        public EulerAngle(float heading, float pitch, float bank)
+        public EulerAngle(float headingDeg, float pitchDeg, float bankDeg)
         {
-            Heading = heading * (float)Math.PI / 180; // Around y-axis
-            Pitch = pitch * (float)Math.PI / 180; // Around x-axis
-            Bank = bank * (float)Math.PI / 180; // Around z-axis
+            Heading = headingDeg * (float)Math.PI / 180; // Around y-axis
+            Pitch = pitchDeg * (float)Math.PI / 180; // Around x-axis
+            Bank = bankDeg * (float)Math.PI / 180; // Around z-axis
         }
 
         public Quaternion ToQuaternion()

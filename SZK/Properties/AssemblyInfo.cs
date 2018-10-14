@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // アセンブリに関する一般情報は以下の属性セットをとおして制御されます。
 // アセンブリに関連付けられている情報を変更するには、
 // これらの属性値を変更してください。
-[assembly: AssemblyTitle("SZK")]
+[assembly: AssemblyTitle("Beastrack")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("SZK")]
+[assembly: AssemblyProduct("Beastrack")]
 [assembly: AssemblyCopyright("Copyright ©  2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // このプロジェクトが COM に公開される場合、次の GUID が typelib の ID になります
-[assembly: Guid("6cb604d0-fa37-4168-b7e6-c662a067bbcb")]
+[assembly: Guid("80d3824b-0963-46f9-a1c4-50e36a4b0c93")]
 
 // アセンブリのバージョン情報は次の 4 つの値で構成されています:
 //

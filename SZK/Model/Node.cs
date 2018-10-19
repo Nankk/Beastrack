@@ -14,9 +14,12 @@ namespace SZK.Model
         {
             Children = new Dictionary<Node, Vector3>();
             Position = new Vector3();
+            Limit = new Range<EulerAngle>
+            {
+                Min = new EulerAngle(-180, -180, -180),
+                Max = new EulerAngle(180, 180, 180)
+            };
             Angle = new EulerAngle();
-            Limit = new Range<EulerAngle>(new EulerAngle(float.MinValue, float.MinValue, float.MinValue),
-                                          new EulerAngle(float.MaxValue, float.MaxValue, float.MaxValue));
         }
 
         public void AddChild(Node node, Vector3 pointerToChild)
@@ -40,7 +43,7 @@ namespace SZK.Model
         }
 
         public Vector3 Position { get; set; }
-        public float LengthScale { get; set; }
+        public float LengthScale { get; set; } = 1f;
 
         public EulerAngle Angle
         {

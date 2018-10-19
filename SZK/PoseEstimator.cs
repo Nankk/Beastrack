@@ -1,8 +1,8 @@
 ﻿using Beastrack.Utility;
 using KMR;
-using Microsoft.SolverFoundation.Services;
-using System;
+using Microsoft.SolverFoundation.Solvers;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Numerics;
 using SZK.Model;
 
@@ -10,107 +10,115 @@ namespace SZK
 {
     public class PoseEstimator
     {
-        public Doll EstimateSingleFrame(List<Keypoint> keypoints)
-        {
-            // Setup solver
-            var solver = SolverContext.GetContext();
-            var model = solver.CreateModel();
-
-            // Setup decisions
-            var doll = new Doll();
-            var centerPositionDecision = new List<Decision>
-            {
-                new Decision(Domain.RealNonnegative, "CenterPositionX"),
-                new Decision(Domain.RealNonnegative, "CenterPositionY"),
-                new Decision(Domain.RealNonnegative, "CenterPositionZ"),
-            };
-            model.AddDecision(centerPositionDecision[0]);
-            model.AddDecision(centerPositionDecision[1]);
-            model.AddDecision(centerPositionDecision[2]);
-            var angleDecisions = CreateAngleDecisions(doll);
-            foreach (var decision in angleDecisions)
-            {
-                model.AddDecision(decision.Value[0]);
-                model.AddDecision(decision.Value[1]);
-                model.AddDecision(decision.Value[2]);
-            }
-
-            // Setup goal
-            model.AddGoal("Goal", GoalKind.Maximize,
-                          CalculateObjectiveFunction(doll, centerPositionDecision, angleDecisions, keypoints));
-
-            // Solve
-            var solution = solver.Solve();
-
-            // Output
-            ReflectDecisionsToDoll(doll, centerPositionDecision, angleDecisions);
-
-            return doll;
-        }
-
-        Dictionary<BodyPart, List<Decision>> CreateAngleDecisions(Doll doll)
-        {
-            var decisions = new Dictionary<BodyPart, List<Decision>>();
-
-            var targetParts = new List<BodyPart>
-            {
-                BodyPart.Center,
-                BodyPart.Neck,
-                BodyPart.RightArm,
-                BodyPart.RightElbow,
-                BodyPart.LeftArm,
-                BodyPart.LeftElbow,
-                BodyPart.RightLeg,
-                BodyPart.RightKnee,
-                BodyPart.RightAnkle,
-                BodyPart.LeftLeg,
-                BodyPart.LeftKnee,
-                BodyPart.LeftAnkle,
-                BodyPart.Upper,
-            };
-
-            foreach (var part in targetParts)
-            {
-                var limit = doll.GetEulerAngleLimit(part);
-                decisions.Add(part,
-                    new List<Decision>
-                    {
-                    new Decision(Domain.RealRange(limit.Min.HeadingDeg, limit.Max.HeadingDeg), $"{part.ToString()}-heading"),
-                    new Decision(Domain.RealRange(limit.Min.PitchDeg, limit.Max.PitchDeg), $"{part.ToString()}-pitch"),
-                    new Decision(Domain.RealRange(limit.Min.BankDeg, limit.Max.BankDeg), $"{part.ToString()}-bank"),
-                    });
-            }
-
-            return decisions;
-        }
-        void ReflectDecisionsToDoll(Doll doll, List<Decision> centerPos, IDictionary<BodyPart, List<Decision>> angles)
-        {
-            doll.SetRootLocation(new Vector3(
-                    (float)centerPos[0].GetDouble(),
-                    (float)centerPos[1].GetDouble(),
-                    (float)centerPos[2].GetDouble()));
-
-            foreach (var angle in angles)
-                doll.SetEulerAngle(angle.Key, new EulerAngle(
-                    (float)angle.Value[0].GetDouble(),
-                    (float)angle.Value[1].GetDouble(),
-                    (float)angle.Value[2].GetDouble()));
-        }
-        double CalculateObjectiveFunction(Doll doll, List<Decision> centerPos, IDictionary<BodyPart, List<Decision>> angles, List<Keypoint> keypoints)
-        {
-            ReflectDecisionsToDoll(doll, centerPos, angles);
-            doll.RenewAllPositions();
-            return doll.CalculateResidualSum(keypoints);
-        }
-
-        public List<Doll> EstimateFrames(List<List<Keypoint>> keypointsCollection)
+        public List<Doll> EstimateFrames(float w, float h, List<List<Keypoint>> keypointsCollection)
         {
             var estimatedDolls = new List<Doll>();
             foreach (var keypoints in keypointsCollection)
             {
-                estimatedDolls.Add(EstimateSingleFrame(keypoints));
+                estimatedDolls.Add(EstimateSingleFrame(w, h, keypoints));
             }
             return estimatedDolls;
         }
+        public Doll EstimateSingleFrame(float w, float h, List<Keypoint> keypoints)
+        {
+            // Setup unknown variables' information
+            var estimationDoll = new Doll();
+            double[] unknowns;
+            double[] lowerLimits;
+            double[] upperLimits;
+            InitializeInputArrays(estimationDoll, out unknowns, out lowerLimits, out upperLimits);
+            double[] unknowns2 = new double[unknowns.Length];
+
+            // Call Nelder-mead solver in Microsoft.Solver.Foundation librabry
+            var solution = NelderMeadSolver.Solve(
+                (input) =>
+                {
+                    ReflectDecisionsToDoll(input, estimationDoll);
+                    estimationDoll.RenewAllPositions();
+                    return estimationDoll.CalculateResidualSum(w, h, (float)input[0], keypoints);
+                },
+                unknowns, lowerLimits, upperLimits);
+
+            Debug.WriteLine($"{solution.Result}");
+            Debug.WriteLine($"Solution = {solution.GetSolutionValue(0)}");
+
+            // Output
+            return estimationDoll;
+        }
+
+        // --- private ---
+        void InitializeInputArrays(Doll doll, out double[] unknowns, out double[] lowerLimits, out double[] upperLimits)
+        {
+            var unknownList = new List<double>();
+            var lowerLimitList = new List<double>();
+            var upperLimitList = new List<double>();
+
+            // Field of view
+            unknownList.Add(System.Math.PI / 4); // Initial assumption is 45 degree
+            lowerLimitList.Add(30 * System.Math.PI / 180);
+            upperLimitList.Add(50 * System.Math.PI / 180);
+
+            // Center position
+            for (int i = 0; i < 3; i++)
+            {
+                unknownList.Add(0.0); // Origin
+                lowerLimitList.Add(double.MinValue);
+                upperLimitList.Add(double.MaxValue);
+            }
+
+            // Angles
+            foreach (var part in _targetParts)
+            {
+                // Heading-Pitch-Bank order
+                for (int i = 0; i < 3; i++) unknownList.Add(0.0); // No rotation
+                var limit = doll.GetEulerAngleLimit(part);
+                lowerLimitList.Add(limit.Min.HeadingDeg);
+                lowerLimitList.Add(limit.Min.PitchDeg);
+                lowerLimitList.Add(limit.Min.BankDeg);
+                upperLimitList.Add(limit.Max.HeadingDeg);
+                upperLimitList.Add(limit.Max.PitchDeg);
+                upperLimitList.Add(limit.Max.BankDeg);
+            }
+
+            unknowns = unknownList.ToArray();
+            lowerLimits = lowerLimitList.ToArray();
+            upperLimits = upperLimitList.ToArray();
+        }
+        void ReflectDecisionsToDoll(double[] unknowns, Doll doll)
+        {
+            int idx = 1; // idx = 0 is used by the field of view
+
+            // Center position
+            doll.SetRootLocation(new Vector3(
+                (float)unknowns[idx++],
+                (float)unknowns[idx++],
+                (float)unknowns[idx++]));
+
+            // Angles
+            foreach (var part in _targetParts)
+            {
+                doll.SetEulerAngle(part, new EulerAngle(
+                    (float)unknowns[idx++],
+                    (float)unknowns[idx++],
+                    (float)unknowns[idx++]));
+            }
+        }
+
+        List<BodyPart> _targetParts = new List<BodyPart>
+        {
+            BodyPart.Center,
+            BodyPart.Neck,
+            BodyPart.RightArm,
+            BodyPart.RightElbow,
+            BodyPart.LeftArm,
+            BodyPart.LeftElbow,
+            BodyPart.RightLeg,
+            BodyPart.RightKnee,
+            BodyPart.RightAnkle,
+            BodyPart.LeftLeg,
+            BodyPart.LeftKnee,
+            BodyPart.LeftAnkle,
+            BodyPart.Upper,
+        };
     }
 }

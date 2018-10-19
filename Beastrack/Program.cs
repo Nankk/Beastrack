@@ -31,18 +31,18 @@ namespace Beastrack
         {
             // KMR モジュールで全ファイル分のList<Keypoint>（平滑化済み）を取ってくる（今はまだ1フレーム分）
             var opr = new OpenPoseReader(@"C:\tmp\");
-            _keypointsCollection.Add(1, opr.ReadOneFile("Sample_000000000132_keypoints.json"));
+            _keypointsCollection.Add(1, opr.ReadOneFile("Sample_000000000213_keypoints.json"));
 
             // foreachで1つずつSZKモジュールで処理
             var dolls = new Dictionary<int, Doll>();
             foreach (var keypoints in _keypointsCollection)
             {
                 var estimator = new PoseEstimator();
-                dolls.Add(keypoints.Key, estimator.EstimateSingleFrame(keypoints.Value));
+                dolls.Add(keypoints.Key, estimator.EstimateSingleFrame(1920, 1080, keypoints.Value));
             }
 
             var vmd = new Vmd("Sample", dolls);
-            var vw = new VmdWriter(@"C:\tmp\test.vmd");
+            var vw = new VmdWriter(@"C:\tmp\Sample_000000000213_keypoints.vmd");
             vw.Write(vmd);
 
             // ※必要な入力引数
@@ -51,6 +51,6 @@ namespace Beastrack
             // Vmd出力ファイルパス
         }
 
-        IDictionary<int, List<Keypoint>> _keypointsCollection;
+        IDictionary<int, List<Keypoint>> _keypointsCollection = new Dictionary<int, List<Keypoint>>();
     }
 }

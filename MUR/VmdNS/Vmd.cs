@@ -38,17 +38,18 @@ namespace MUR.VmdNS
 
                     frame.Bones.Add(bone.Name, bone);
                 }
+                Frames.Add(frame);
             }
+            ItemsTotal = Frames.Select(f => f.Bones.Count).Sum();
         }
 
         public string Header { get; set; } = "Vocaloid Motion Data 0002";
         public string ModelName { get; set; }
-        public int FramesTotal { get; set; }
+        public int ItemsTotal { get; set; } // Need to be mutable: set when reading a vmd file
         public List<Frame> Frames { get; set; }
 
         IDictionary<BodyPart, string> _bodyPartNameMap = new Dictionary<BodyPart, string>
         {
-            { BodyPart.Center,    "センター" },
             { BodyPart.Neck,      "首" },
             { BodyPart.RightEye,  "右目" },
             { BodyPart.LeftEye,   "左目" },
@@ -67,6 +68,7 @@ namespace MUR.VmdNS
             { BodyPart.LeftAnkle, "左足首" },
             { BodyPart.LeftToe,   "左つま先ＩＫ" },
             { BodyPart.Upper,     "上半身" },
+            { BodyPart.Center,    "センター" },
         };
     }
 }

@@ -11,7 +11,7 @@ namespace MUR
         static void Main(string[] args)
         {
 #if DEBUG
-            string path = @"C:\tmp\Sample2.vmd";
+            string path = @"C:\tmp\Sample_000000000213_keypoints.vmd";
 #else
             string path = args[0];
 #endif

@@ -2,8 +2,8 @@
 using KMR;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Numerics;
-using SZK.Helper;
 
 namespace SZK.Model
 {
@@ -59,25 +59,63 @@ namespace SZK.Model
         {
             _nodes[_root].Propagate();
         }
-        public double CalculateResidualSum(List<Keypoint> keypoints)
+        public double CalculateResidualSum(float w, float h, float fovRad, List<Keypoint> keypoints)
         {
             double sum = 0;
             for (int i = 0; i < keypoints.Count; i++)
             {
                 if (!_body25Map.ContainsKey(i)) continue;
                 BodyPart bodyPart = _body25Map[i];
-                var projected = TkHelper.Project(new OpenTK.Vector3d(
+                var projected = Project(w, h, fovRad, new Vector3(
                     _nodes[bodyPart].Position.X,
                     _nodes[bodyPart].Position.Y,
                     _nodes[bodyPart].Position.Z));
+
                 double diffX = projected.X - keypoints[i].X;
                 double diffY = projected.Y - keypoints[i].Y;
                 sum += Math.Sqrt(diffX * diffX + diffY * diffY);
             }
+
             return sum;
         }
 
         // --- private ---
+        Vector2 Project(float w, float h, float fovRad, Vector3 v)
+        {
+            // Add the w value for the calculation
+            var v4 = new Vector4(v, 1f);
+
+            // System.Numerics assumes the right-hand coordinate system
+            var modelViewMatrix = Matrix4x4.CreateLookAt(new Vector3(0, 1, 4), new Vector3(0, 0, 0), Vector3.UnitY);
+            var projectionMatrix = Matrix4x4.CreatePerspectiveFieldOfView(fovRad, w / h, 0.1f, 1000.0f);
+            var viewportMatrix = new Matrix4x4(w / 2, 0, 0, 0,
+                                                 0, -h / 2, 0, 0,
+                                                 0, 0, 1, 0,
+                                               w / 2, h / 2, 0, 1);
+
+            v4 = Vector4.Transform(v4, modelViewMatrix);
+            v4 = Vector4.Transform(v4, projectionMatrix);
+            v4 = Vector4.Multiply(1f / v4.W, v4);  // Manual normalization required
+            v4 = Vector4.Transform(v4, viewportMatrix);
+
+            return new Vector2(v4.X, v4.Y);
+        }
+        void InitializeOpenGl()
+        {
+            int w = 800;
+            int h = 600;
+
+            OpenTK.Graphics.OpenGL.GL.Viewport(0, 0, w, h);
+            OpenTK.Graphics.OpenGL.GL.MatrixMode(OpenTK.Graphics.OpenGL.MatrixMode.Projection);
+            OpenTK.Matrix4 projection = OpenTK.Matrix4.CreatePerspectiveFieldOfView(
+                (float)Math.PI / 4,
+                (float)w / h,
+                0.1f,
+                1000.0f);
+            OpenTK.Graphics.OpenGL.GL.LoadMatrix(ref projection);
+
+        }
+
         void SetConnectionInformation()
         {
             // Center -> [Upper RightLeg LeftLeg]

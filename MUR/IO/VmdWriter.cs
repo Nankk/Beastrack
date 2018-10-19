@@ -1,10 +1,7 @@
 ﻿using MUR.VmdNS;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MUR.IO
 {
@@ -32,7 +29,7 @@ namespace MUR.IO
         {
             WriteString(bw, vmd.Header, 30);
             WriteString(bw, vmd.ModelName, 20);
-            bw.Write(vmd.FramesTotal);
+            bw.Write(vmd.ItemsTotal);
         }
         void WriteFrames(BinaryWriter bw, Vmd vmd)
         {
@@ -42,9 +39,18 @@ namespace MUR.IO
                 {
                     WriteString(bw, bone.Key, 15);
                     bw.Write(frame.Index);
-                    bw.Write(bone.Value.Position.X);
-                    bw.Write(bone.Value.Position.Y);
-                    bw.Write(bone.Value.Position.Z);
+                    if (IsPositionOutputTarget(bone.Key))
+                    {
+                        bw.Write(bone.Value.Position.X);
+                        bw.Write(bone.Value.Position.Y);
+                        bw.Write(bone.Value.Position.Z);
+                    }
+                    else
+                    {
+                        bw.Write(0f);
+                        bw.Write(0f);
+                        bw.Write(0f);
+                    }
                     bw.Write(bone.Value.Quaternion.X);
                     bw.Write(bone.Value.Quaternion.Y);
                     bw.Write(bone.Value.Quaternion.Z);
@@ -52,6 +58,14 @@ namespace MUR.IO
                     bw.Write(bone.Value.InterpolationParameters.ToArray());
                 }
             }
+        }
+        bool IsPositionOutputTarget(string boneName)
+        {
+            foreach (var name in _positionOutputItemNames)
+            {
+                if (boneName.IndexOf(name) > -1) return true;
+            }
+            return false;
         }
         void WriteString(BinaryWriter bw, string s, int length = -1)
         {
@@ -74,5 +88,10 @@ namespace MUR.IO
         }
 
         string _path;
+        List<string> _positionOutputItemNames = new List<string>
+        {
+            "センター",
+            "ＩＫ",
+        };
     }
 }

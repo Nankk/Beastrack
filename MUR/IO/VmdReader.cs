@@ -30,7 +30,7 @@ namespace MUR.IO
         {
             vmd.Header = ReadString(br, 30);
             vmd.ModelName = ReadString(br, 20);
-            vmd.FramesTotal = br.ReadInt32();
+            vmd.ItemsTotal = br.ReadInt32();
         }
         void ReadFrames(BinaryReader br, ref Vmd vmd)
         {

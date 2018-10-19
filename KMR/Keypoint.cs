@@ -22,5 +22,10 @@ namespace KMR
         public double X { get; set; }
         public double Y { get; set; }
         public double Reliability { get; set; }
+
+        public override string ToString()
+        {
+            return $"({X:#,0},{Y:#,0}) Reliability={Reliability * 100:0}%";
+        }
     }
 }

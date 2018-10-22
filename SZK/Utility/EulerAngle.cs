@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Numerics;
 
-namespace Beastrack.Utility
+namespace SZK.Utility
 {
     public class EulerAngle
     {

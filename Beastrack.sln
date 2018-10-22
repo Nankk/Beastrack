@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MUR", "MUR\MUR.csproj", "{9
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Beastrack", "Beastrack\Beastrack.csproj", "{6EAE1167-169F-4C7B-BA41-921C09B4EA48}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test_GraphicalChecking", "Test_GraphicalChecking\Test_GraphicalChecking.csproj", "{A0B824A1-688D-48A4-83DF-DF41113DF9F5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{6EAE1167-169F-4C7B-BA41-921C09B4EA48}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6EAE1167-169F-4C7B-BA41-921C09B4EA48}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6EAE1167-169F-4C7B-BA41-921C09B4EA48}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A0B824A1-688D-48A4-83DF-DF41113DF9F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A0B824A1-688D-48A4-83DF-DF41113DF9F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A0B824A1-688D-48A4-83DF-DF41113DF9F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A0B824A1-688D-48A4-83DF-DF41113DF9F5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

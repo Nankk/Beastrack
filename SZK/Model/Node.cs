@@ -5,10 +5,11 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using SZK.Utility;
 
 namespace SZK.Model
 {
-    class Node
+    public class Node
     {
         public Node()
         {

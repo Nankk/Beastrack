@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Numerics;
+using SZK.Utility;
 
 namespace SZK.Model
 {
@@ -78,6 +79,13 @@ namespace SZK.Model
 
             return sum;
         }
+
+        public Node RootNode
+        {
+            get { return _nodes[_root]; }
+        }
+
+        private int _MyProperty;
 
         // --- private ---
         Vector2 Project(float w, float h, float fovRad, Vector3 v)
